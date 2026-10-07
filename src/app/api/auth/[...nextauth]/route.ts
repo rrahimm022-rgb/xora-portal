@@ -1,45 +1,6 @@
-import { PrismaAdapter } from "@auth/prisma-adapter";
-import { NextAuthOptions } from "next-auth";
-import DiscordProvider from "next-auth/providers/discord";
-import { db } from "@/lib/db";
+import NextAuth from "next-auth";
+import { authOptions } from "@/lib/auth"; // Sesuaikan path jika file auth.ts Anda di tempat lain
 
-export const authOptions: NextAuthOptions = {
-  adapter: PrismaAdapter(db),
+const handler = NextAuth(authOptions);
 
-  session: {
-    strategy: "jwt",
-  },
-
-  secret: process.env.NEXTAUTH_SECRET,
-
-  providers: [
-    DiscordProvider({
-      clientId: process.env.DISCORD_CLIENT_ID!,
-      clientSecret: process.env.DISCORD_CLIENT_SECRET!,
-    }),
-  ],
-
-  callbacks: {
-    async jwt({ token, user }) {
-      if (user) {
-        token.id = user.id;
-        token.role = user.role;
-      }
-
-      return token;
-    },
-
-    async session({ session, token }) {
-      if (session.user) {
-        session.user.id = token.id as string;
-        session.user.role = token.role as string;
-      }
-
-      return session;
-    },
-  },
-
-  pages: {
-    signIn: "/",
-  },
-};
+export { handler as GET, handler as POST };
