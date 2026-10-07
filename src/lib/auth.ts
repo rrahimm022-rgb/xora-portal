@@ -21,13 +21,10 @@ export const authOptions: NextAuthOptions = {
 
   callbacks: {
     async jwt({ token, user }) {
-      // Saat login pertama kali, object user tersedia
       if (user) {
         token.id = user.id;
-        // Pastikan model User di Prisma schema Anda sudah memiliki field `role`
-        token.role = (user as any).role; 
+        token.role = (user as any).role;
       }
-
       return token;
     },
 
@@ -36,7 +33,6 @@ export const authOptions: NextAuthOptions = {
         session.user.id = token.id as string;
         session.user.role = token.role as string;
       }
-
       return session;
     },
   },
@@ -44,4 +40,4 @@ export const authOptions: NextAuthOptions = {
   pages: {
     signIn: "/",
   },
-};
+}; // <--- Pastikan kurung kurawal penutup export ini ada di paling akhir
